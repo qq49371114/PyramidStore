@@ -1,6 +1,8 @@
 #coding=utf-8
 #!/usr/bin/python
 import sys
+from security import safe_requests
+
 sys.path.append('..') 
 from base.spider import Spider
 import json
@@ -48,7 +50,7 @@ class Spider(Spider):  # 元类 默认的元类 type
 		subtitle = ids[4]
 		url = self.getDownloadUrl(shareId,shareToken,fileId,category)
 
-		noRsp = requests.get(url,headers=self.header, allow_redirects=False,verify = False)
+		noRsp = safe_requests.get(url,headers=self.header, allow_redirects=False,verify = False)
 		realUrl = ''
 		if 'Location' in noRsp.headers:
 			realUrl = noRsp.headers['Location']
@@ -95,7 +97,7 @@ class Spider(Spider):  # 元类 默认的元类 type
 		downloadUrl = 'https://api.aliyundrive.com/v2/file/get_share_link_download_url'
 		resultJo = requests.post(downloadUrl,json = jo,headers=customHeader).json()
 		print(resultJo)
-		noRsp = requests.get(resultJo['download_url'],headers=self.header, allow_redirects=False,verify = False)
+		noRsp = safe_requests.get(resultJo['download_url'],headers=self.header, allow_redirects=False,verify = False)
 		realUrl = ''
 		if 'Location' in noRsp.headers:
 			realUrl = noRsp.headers['Location']
@@ -197,7 +199,7 @@ class Spider(Spider):  # 元类 默认的元类 type
 	localProxyUrl = 'http://127.0.0.1:UndCover/proxy'
 
 	def redirectResponse(tUrl):
-		rsp = requests.get(tUrl, allow_redirects=False,verify = False)
+		rsp = safe_requests.get(tUrl, allow_redirects=False,verify = False)
 		if 'Location' in rsp.headers:
 			return redirectResponse(rsp.headers['Location'])
 		else:
@@ -265,13 +267,13 @@ class Spider(Spider):  # 元类 默认的元类 type
 			if len(highUrl) == 0:
 				highUrl = videoList[0]['url']
 
-		noRsp = requests.get(highUrl,headers=self.header, allow_redirects=False,verify = False)
+		noRsp = safe_requests.get(highUrl,headers=self.header, allow_redirects=False,verify = False)
 		m3u8Url = ''
 		if 'Location' in noRsp.headers:
 			m3u8Url = noRsp.headers['Location']
 		if 'location' in noRsp.headers and len(m3u8Url) == 0 :
 			m3u8Url = noRsp.headers['location']
-		m3u8Rsp = requests.get(m3u8Url,headers=self.header)
+		m3u8Rsp = safe_requests.get(m3u8Url,headers=self.header)
 		m3u8Content = m3u8Rsp.text
 
 		tmpArray = m3u8Url.split('/')[0:-1]
