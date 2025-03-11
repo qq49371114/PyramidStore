@@ -6,6 +6,8 @@ import requests
 from lxml import etree
 from abc import abstractmethod,ABCMeta
 from importlib.machinery import SourceFileLoader
+from security import safe_requests
+
 class Spider(metaclass=ABCMeta):
     _instance = None
     def __new__(cls, *args, **kwargs):
@@ -50,7 +52,7 @@ class Spider(metaclass=ABCMeta):
         clean = re.sub('[\U0001F600-\U0001F64F\U0001F300-\U0001F5FF\U0001F680-\U0001F6FF\U0001F1E0-\U0001F1FF]', '', src)
         return clean
     def fetch(self,url,headers={},cookies=""):
-        rsp = requests.get(url,headers=headers,cookies=cookies)
+        rsp = safe_requests.get(url,headers=headers,cookies=cookies)
         rsp.encoding='utf-8'
         return rsp
     def post(self,url,data,headers={},cookies={}):
